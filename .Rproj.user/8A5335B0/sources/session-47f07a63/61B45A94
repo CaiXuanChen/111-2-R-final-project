@@ -3,7 +3,7 @@
     "path": "C:/Users/caisyuan/OneDrive/桌面/111-2-R-final-project/R/Main.R",
     "project_path": "R/Main.R",
     "type": "r_source",
-    "hash": "0",
+    "hash": "1511937956",
     "contents": "",
     "dirty": true,
     "created": 1684687470711.0,
@@ -12,16 +12,16 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "33,0",
-        "scrollLine": "13",
+        "cursorPosition": "34,0",
+        "scrollLine": "18",
         "docOutlineVisible": "1"
     },
     "folds": "",
-    "lastKnownWriteTime": 1684688295,
+    "lastKnownWriteTime": 1684689234,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1684689116962,
+    "last_content_update": 1684861479550,
     "read_only": false,
     "read_only_alternatives": []
 }
