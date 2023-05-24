@@ -1,0 +1,48 @@
+# Final project----
+## set up environment ----
+source("R/helpers.R")
+
+library(tidyverse)
+library(readxl)
+library(tidyr)
+library(tidyselect)
+install.packages("rlang")
+install.packages("readxl")
+
+# save progress----
+saveRDS(final,file="final.Rds")
+
+## progress saving object資料匯入 ----
+final<-list()
+
+## 各區----
+
+# 讀取臺南市各區各類別之診所、醫院資料
+final <- read.csv("C:/Users/caisyuan/OneDrive/桌面/111-2-R-final-project/R/臺南市各區各類別之診所、醫院.csv")
+
+# 移除特定欄位----
+final <- final[, -c(2, 4)]
+
+# 載入所需套件----
+library(stringr)
+library(reshape2)
+
+# 提取區域名稱----
+final$各類別 <- str_extract(final$地址, "([^.{2}市])")
+
+# 建立地址資料向量----
+addresses <- c("臺南市新營區三民路76之10號", "臺南市新營區中山路257號", "臺南市新營區民權路118之2號", ...)
+
+# 使用 stringr 函數對地址進行處理
+subaddresses <- str_extract(addresses, "(^.{2}[市])")
+subaddresses <- str_remove(subaddresses, "(^.+{2}[區])")
+
+# 建立 data.frame----
+df <- data.frame(addresses = addresses, subaddresses = subaddresses, stringsAsFactors = FALSE)
+
+# 載入 reshape2 套件---
+library(reshape2)
+
+
+
+
