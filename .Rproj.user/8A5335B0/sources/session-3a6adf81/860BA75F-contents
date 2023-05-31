@@ -1,0 +1,94 @@
+# Final project----
+## set up environment ----
+source("R/helpers.R")
+
+# save progress----
+saveRDS(final,file="final.Rds")
+
+## progress saving object資料匯入 ----
+final<-list()
+
+### 各區----
+
+# 導入資料--
+df <- read.csv("C:/Users/caisyuan/OneDrive/桌面/111-2-R-final-project/R/臺南市各區各類別之診所、醫院.csv")
+
+## 建立臺南市各區的list-獨立出區域名----
+tainan_list <- c("臺南市新營區","臺南市永康區","臺南市鹽水區","臺南市白河區","臺南市佳里區",
+                 "臺南市學甲區","臺南市麻豆區","臺南市下營區","臺南市新化區","臺南市善化區",
+                 "臺南市柳營區","臺南市後壁區","臺南市東山區","臺南市六甲區","臺南市官田區",
+                 "臺南市大內區","臺南市西港區","臺南市七股區","臺南市將軍區","臺南市北門區",
+                 "臺南市新市區","臺南市安定區","臺南市山上區","臺南市玉井區","臺南市楠西區",
+                 "臺南市南化區","臺南市左鎮區","臺南市仁德區","臺南市歸仁區","臺南市關廟區",
+                 "臺南市龍崎區","臺南市東區","臺南市南區","臺南市北區","臺南市中西區",
+                 "臺南市安南區","臺南市安平區")
+
+## 新增「行政區」欄位並用迴圈將地址中的行政區獨立出來----
+df$行政區 <- ""
+for (i in 1:nrow(df)) {
+  for (j in tainan_list) {
+    if (grepl(j, df$地址[i])) {
+      df$行政區[i] <- j
+      break
+    }
+  }
+}
+
+## 統計有各區有幾筆資料
+result1 <- data.frame(table(df$行政區))
+colnames(result1) <- c("行政區","診所、醫院數")
+result1
+
+## 將result1存檔
+write.csv(result1, "result1.csv")
+
+# 轉成該科別名稱
+install.packages("vctrs")
+install.packages("dplyr")
+install.packages("tidyverse")
+library(dplyr)
+library(tidyverse)
+
+departments <- colnames(df)[5:45]
+
+# 調換欄位順序
+df1 <- select(df, 機構名稱,機構代碼,地址,行政區,電話,departments)
+
+# 將其轉為長表格(longer)
+df2 <- df1 %>% 
+  pivot_longer(cols = departments,names_to = '主治科別',values_to = '是否主治')
+
+## 將是否主治的空字串轉換NA
+
+#df2 <- mutate(df2, `是否主治` = ifelse(`是否主治` == "", NA, "是")) 
+
+## 移除空字串所在的資料列
+
+#df2 <- filter(df2, !is.na(`是否主治`))
+
+# 將是否主治的空字串轉換為0，*轉換為1
+df2 <- mutate(df2, `是否主治` = ifelse(`是否主治` == "" | is.na(`是否主治`), 0, 1)) 
+
+write.csv(df2,"df2.csv")
+
+# 統計各區的科別數量
+count_per_district <- df2 %>%
+  group_by(行政區, 主治科別) %>%
+  summarise(count = sum(是否主治)) %>%
+  ungroup()
+write.csv(count_per_district,"count_per_district.csv")
+
+# 統計各區最熱門的科別
+hottest_per_district <- count_per_district %>%
+  group_by(行政區) %>%
+  filter(count == max(count)) %>%
+  select(行政區, 主治科別, count)
+write.csv(hottest_per_district,"hottest_per_district.csv")
+
+# 統計各區最冷門的科別
+coldest_per_district <- count_per_district %>%
+  group_by(行政區) %>%
+  filter(count == min(count)) %>%
+  select(行政區, 主治科別, count)
+write.csv(coldest_per_district,"coldest_per_district.csv")
+
